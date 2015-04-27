@@ -15,7 +15,7 @@ launch: $(ec2_env)
 	spark-ec2 $@ --slaves $(slave) --instance-type=c1.xlarge --region=$(region) --zone=$(zone) $(USER)
 
 master: $(ec2_env) 
-	source $< && spark-ec2 $@ $(USER) | tail -n 1 | tee $@
+	source $< && spark-ec2 get-$@ $(USER) | tail -n 1 | tee $@
 
 login: $(ec2_env) master
 	python scp_env.py $(p_key) $<
@@ -28,4 +28,4 @@ destroy: $(ec2_env)
 clean:
 	rm -rf master ~/.aws-* ~/.boto ~/.s3cfg $(ec2_env) $(p_key) 
 
-.PHONY: genenv launch destory clean
+.PHONY: genenv launch master destory clean
