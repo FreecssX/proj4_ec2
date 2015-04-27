@@ -6,13 +6,16 @@ ec2_env = ~/ec2-environment.sh
 p_key   = ~/$(USER)-default.pem
 
 $(ec2_env):
-	bash ~cs61c/ec2-init.sh
+	cd ~ && bash ~cs61c/ec2-init.sh
 
-genenv: $(ec2_env)
+account: $(ec2_env)
 
 launch: $(ec2_env)
 	source $< && \
 	spark-ec2 $@ --slaves $(slave) --instance-type=c1.xlarge --region=$(region) --zone=$(zone) $(USER)
+
+resume: $(ec2_env)
+	source $< && spark-ec2 launch --resume $(USER)
 
 master: $(ec2_env) 
 	source $< && spark-ec2 $@ $(USER) | tail -n 1 | tee $@
@@ -23,7 +26,6 @@ login: $(ec2_env) master
 	
 destroy: $(ec2_env) 
 	source $< && spark-ec2 destroy $(USER)
-	ec2-delete-group -k $(key)
 
 clean:
 	rm -rf master ~/.aws-* ~/.boto ~/.s3cfg $(ec2_env) $(p_key) 
