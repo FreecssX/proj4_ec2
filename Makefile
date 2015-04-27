@@ -3,6 +3,7 @@ region  ?= us-east-1
 zone    ?= us-east-1a
 key     = $(USER)-default
 ec2_env = ~/ec2-environment.sh
+p_key   = ~/$(USER)-default.pem
 
 $(ec2_env):
 	bash ~cs61c/ec2-init.sh
@@ -13,10 +14,11 @@ launch: $(ec2_env)
 	source $< && \
 	spark-ec2 $@ --slaves $(slave) --instance-type=c1.xlarge --region=$(region) --zone=$(zone) $(USER)
 
-get-master: $(ec2_env) 
-	source $< && spark-ec2 $@ $(USER) 
+master: $(ec2_env) 
+	source $< && spark-ec2 $@ $(USER) | tail -n 1 | tee $@
 
-login: $(ec2_env)
+login: $(ec2_env) master
+	python scp_env.py $(p_key) $<
 	source $< && spark-ec2 $@ $(USER)
 	
 destroy: $(ec2_env) 
@@ -24,6 +26,6 @@ destroy: $(ec2_env)
 	ec2-delete-group -k $(key)
 
 clean:
-	rm -rf ~/.aws-* ~/.boto ~/.s3cfg ~/ec2-environment.sh ~/$(USER)-default.pem
+	rm -rf master ~/.aws-* ~/.boto ~/.s3cfg $(ec2_env) $(p_key) 
 
 .PHONY: genenv launch destory clean
