@@ -1,4 +1,5 @@
-slave   ?= 1
+slaves  ?= 5
+inst    ?= c3.8xlarge
 region  ?= us-east-1
 zone    ?= us-east-1a
 key     = $(USER)-default
@@ -12,7 +13,7 @@ account: $(ec2_env)
 
 launch: $(ec2_env)
 	source $< && \
-	spark-ec2 $@ --slaves $(slave) --instance-type=c1.xlarge --region=$(region) --zone=$(zone) $(USER)
+	spark-ec2 $@ --slaves $(slaves) --instance-type=$(inst) --region=$(region) --zone=$(zone) $(USER)
 
 resume: $(ec2_env)
 	source $< && spark-ec2 launch --resume $(USER)
