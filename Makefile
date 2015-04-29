@@ -13,15 +13,15 @@ account: $(ec2_env)
 
 launch-test: $(ec2_env)
 	source $< && \
-	spark-ec2 $@ --slaves 3 --instance-type=$(test) --region=$(region) --zone=$(zone) $(USER)
+	spark-ec2 launch --slaves 3 --instance-type=$(test) --region=$(region) --zone=$(zone) $(USER)
 
 launch-small: $(ec2_env)
 	source $< && \
-	spark-ec2 $@ --slaves 5 --instance-type=$(run) --region=$(region) --zone=$(zone) $(USER)
+	spark-ec2 launch --slaves 5 --instance-type=$(run) --region=$(region) --zone=$(zone) $(USER)
 
 launch-big: $(ec2_env)
 	source $< && \
-	spark-ec2 $@ --slaves 5 --instance-type=$(run) --region=$(region) --zone=$(zone) $(USER)
+	spark-ec2 launch --slaves 10 --instance-type=$(run) --region=$(region) --zone=$(zone) $(USER)
 
 resume: $(ec2_env)
 	source $< && spark-ec2 launch --resume $(USER)
