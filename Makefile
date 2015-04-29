@@ -1,5 +1,5 @@
-slaves  ?= 5
-inst    ?= c3.8xlarge
+slaves  ?= 6
+inst    ?= r3.large
 region  ?= us-east-1
 zone    ?= us-east-1a
 key     = $(USER)-default
